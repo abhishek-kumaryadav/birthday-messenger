@@ -1,6 +1,7 @@
 package google
 
 import (
+	"birthdaymessenger/pkg/fileutil"
 	"context"
 	"fmt"
 	"log"
@@ -13,8 +14,10 @@ import (
 )
 
 func GetPhoneNumbers(name string) (string, error) {
+	props, err := fileutil.ReadPropertiesFile("birthday-messenger.properties")
+
 	ctx := context.Background()
-	b, err := os.ReadFile("credentials.json")
+	b, err := os.ReadFile(props["gcp.credentials.path"])
 	if err != nil {
 		log.Fatalf("Unable to read client secret file: %v", err)
 	}

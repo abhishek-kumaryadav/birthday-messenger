@@ -2,6 +2,7 @@ package fileutil
 
 import (
 	"bufio"
+	"fmt"
 	"log"
 	"os"
 	"strings"
@@ -39,6 +40,10 @@ func ReadPropertiesFile(filename string) (AppConfigProperties, error) {
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
 		return nil, err
+	}
+
+	if config["whatsapp.phoneNumberId"] == "" || config["whatsapp.template"] == "" || config["whatsapp.authToken"] == "" {
+		fmt.Println("Error properties not loaded correctly")
 	}
 
 	return config, nil
