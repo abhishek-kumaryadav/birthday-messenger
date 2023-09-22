@@ -2,7 +2,7 @@ package google
 
 import (
 	"birthdaymessenger/models"
-	"birthdaymessenger/pkg/fileutil"
+	"birthdaymessenger/models/properties"
 	"context"
 	"fmt"
 	"log"
@@ -18,11 +18,9 @@ import (
 
 func GetBirthDays() ([]*models.Person, error) {
 
-	props, err := fileutil.ReadPropertiesFile("birthday-messenger.properties")
-
 	var persons []*models.Person
 	ctx := context.Background()
-	b, err := os.ReadFile(props["gcp.credentials.path"])
+	b, err := os.ReadFile(properties.GetGcpCredentialsPath())
 	if err != nil {
 		log.Fatalf("Unable to read client secret file: %v", err)
 	}

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"birthdaymessenger/pkg/fileutil"
+	"birthdaymessenger/models/properties"
 	"birthdaymessenger/pkg/google"
 	"birthdaymessenger/pkg/whatsapp"
 	"fmt"
@@ -11,7 +11,7 @@ import (
 	"github.com/go-co-op/gocron"
 )
 
-func process(whatsappTemplate string, whatsappPhoneNumberId string, whatsappAuthToken string) {
+func process() {
 	birthdays, err := google.GetBirthDays()
 	if err != nil {
 		log.Fatalf("Unable to get birthdays: %v", err)
@@ -22,20 +22,15 @@ func process(whatsappTemplate string, whatsappPhoneNumberId string, whatsappAuth
 			log.Fatalf("Unable to get phone numbers: %v", err)
 		}
 		fmt.Println(phoneNumber)
-		whatsapp.SendMessage(phoneNumber, whatsappTemplate, whatsappPhoneNumberId, whatsappAuthToken)
+		whatsapp.SendMessage(phoneNumber)
 	}
 }
 
 func main() {
-	props, err := fileutil.ReadPropertiesFile("birthday-messenger.properties")
-	if err != nil {
-		fmt.Println("Error while reading properties file")
-	}
 
 	s := gocron.NewScheduler(time.UTC)
-	_, err = s.Every(props["job.frequency"]).Seconds().Do(func() {
-		process(props["whatsapp.template"], props["whatsapp.phoneNumberId"], props["whatsapp.authToken"])
-	})
+	fmt.Println(properties.GetJobFrequency())
+	_, err := s.Every(properties.GetJobFrequency() + "s").Do(func() { process() })
 	if err != nil {
 		fmt.Println("Error executing job", err)
 	}
